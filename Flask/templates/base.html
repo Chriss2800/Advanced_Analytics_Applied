@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Carrefour</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet" />
+    
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/bootstrap.min.css') }}" />
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+
+
+</head>
+
+<body>
+
+    <!-- navbar -->
+    {% block content %}
+    
+    {% endblock content %}
+
+    <!-- Optional JavaScript -->
+    <!-- Popper.js, then Bootstrap JS -->
+
+    <script src="{{ url_for('static', filename='bootstrap/popper.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='bootstrap/bootstrap.min.js') }}"></script>
+    <!-- Weitere Skripte können folgen -->
+
+
+
+
+</body>
+
+</html>
