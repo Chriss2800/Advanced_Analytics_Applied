@@ -1,0 +1,62 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    height: 150vh;
+    /* Ensure there's enough content to scroll */
+    overflow-x: hidden;
+    /* Hide horizontal scrollbar */
+}
+
+.parallax-container {
+    position: relative;
+    height: 80vh;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    overflow: hidden;
+    margin-bottom: 10vh;
+}
+
+.parallax-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+}
+
+.parallax-container::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.7);
+    /* Adjust the alpha channel for darkness (0 is transparent, 1 is fully opaque) */
+}
+
+.parallax-heading {
+    font-size: 5em;
+    margin: 0;
+    text-shadow: 2px 2px 4px #999;
+}
+
+.parallax-paragraph {
+    font-size: 3em;
+    margin-top: 10px;
+    text-shadow: 2px 2px 4px #999;
+}
+
+.help-text {
+    display: none;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px #888;
+    z-index: 1;
+}
