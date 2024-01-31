@@ -36,8 +36,15 @@ def home():
             file_field = getattr(form, f'file{i}')
             file = file_field.data
             if file:
-                df = pd.read_excel(file)
-                html_table = df.to_html(index=False)
+                 for sheet_number in range(1, 7):
+                    sheet_name = f'Sheet{sheet_number}'
+                    df = pd.read_excel(file, sheet_name, header=6)
+                    df = df.loc[:, ~df.columns.str.contains(
+                        "Unnamed: 0|Unnamed: 1|Unnamed: 4|Unnamed: 6")]
+                    df.rename(columns={'Unnamed: 2': "Index"}, inplace=True)
+                    html_table = df.to_html(index=False)
+                # df = pd.read_excel(file)
+               
 
     return render_template("index.html", form=form, html_table=html_table)
 
