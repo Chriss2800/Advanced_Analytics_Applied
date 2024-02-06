@@ -44,7 +44,44 @@ class FileToSQLite():
             print(f"Error: {e}")
 
     def process_ca_bench_reporting_factorie_pdf(self, pdf_file):
-        pass
+        try:
+            df = tabula.read_pdf(pdf_file, pages='all',
+                                 multiple_tables=False)[0]
+            journee_value = df.iloc[0, 3].split(" ")[0]
+            df = df.drop([0, 1, 2])
+            df = df.drop(df.columns[-1], axis=1)
+            df = df[df.iloc[:, 0] != "SURFACE DE VENTE"]
+            df = df.dropna(subset=[df.columns[0]])
+            df = df.reset_index(drop=True)
+            column_names = [
+                'SURFACE DE VENTE',
+                f"{journee_value} CA TTC K€",
+                f"{journee_value} CA TTC % Evol",
+                f"{journee_value} Débits Nbre",
+                f"{journee_value} Débits % Evol",
+                f"{journee_value} Panier €",
+                f"{journee_value} Panier % Evol",
+                "Semaine à date CA TTC K€",
+                "Semaine à date CA TTC % Evol",
+                "Semaine à date Débits Nbre",
+                "Semaine à date Débits % Evol",
+                "Semaine à date Panier €",
+                "Semaine à date Panier % Evol",
+                "Actualisé Mois CA TTC K€",
+                "Actualisé Mois CA TTC % Evol",
+            ]
+            df.columns = column_names
+            df['upload_date'] = pd.to_datetime(
+                datetime.today().strftime('%d-%m-%Y'))
+            connection = sqlite3.connect(self.sqlite_db_path)
+            df.to_sql(name="ca_bench_reporting_factorie", con=connection,
+                      if_exists="append", index=False)
+
+            connection.commit()
+            connection.close()
+
+        except Exception as e:
+            print(f"Error: {e}")
 
     def process_ca_ht_caroline_pdf(self, pdf_file):
         try:

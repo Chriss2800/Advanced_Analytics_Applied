@@ -45,7 +45,7 @@ def home():
         if request.files['file2'].filename == 'CA BENCH REPORTING FACTORIE.pdf':
             file2 = request.files['file2']
             file_service.process_ca_bench_reporting_factorie_pdf(file2)
-            success_list.append(request.files['filew'].filename)
+            success_list.append(request.files['file2'].filename)
         if request.files['file3'].filename == 'CA HT CAROLINE.pdf':
             file3 = request.files['file3']
             file_service.process_ca_ht_caroline_pdf(file3)
