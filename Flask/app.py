@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect, url_for
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from wtforms import SubmitField
@@ -59,7 +59,17 @@ def home():
             file_service.process_casse_caroline_xlsx(file5)
             success_list.append(request.files['file5'].filename)
 
-    return render_template("index.html", form=form, file_list=FILE_LIST, success_list=success_list)
+            session['success_list'] = success_list
+        return redirect(url_for('download'))
+
+    return render_template("index.html", form=form, file_list=FILE_LIST)
+
+@app.route('/download', methods=['GET', 'POST'])
+def download():
+    success_list = session.get('success_list', [])
+
+    return render_template("download.html", success_list=success_list)
+
 
 
 if __name__ == '__main__':
