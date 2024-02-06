@@ -38,8 +38,12 @@ def home():
     form = UploadFileForm()
 
     if form.validate_on_submit():
-        file5 = request.files['file5']
-        excel_service.process_casse_caroline_xlsx(file5)
+        if request.files['file1'].filename == 'ANACAMARGE_SYNTHESE.xlsx':
+            file1 = request.files['file1']
+            excel_service.process_anacamarge_synthese_xlsx(file1)
+        if request.files['file5'].filename == 'CASSE CAROLINE.xlsx':
+            file5 = request.files['file5']
+            excel_service.process_casse_caroline_xlsx(file5)
 
     return render_template("index.html", form=form, html_table=html_table, file_list=FILE_LIST)
 

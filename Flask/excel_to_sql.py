@@ -8,6 +8,10 @@ class ExcelToSQLite():
     def __init__(self):
         self.sqlite_db_path = "database.db"
 
+    def process_anacamarge_synthese_xlsx(self, excel_file):
+        df = pd.read_excel(excel_file)
+        print(df)
+
     def process_casse_caroline_xlsx(self, excel_file):
         sheet_names = pd.ExcelFile(excel_file).sheet_names
 
@@ -18,7 +22,7 @@ class ExcelToSQLite():
                 "Unnamed: 0|Unnamed: 1|Unnamed: 4|Unnamed: 6")]
             df.rename(columns={'Unnamed: 2': "Index"}, inplace=True)
 
-            # Extrahiere den Wert aus der Zelle C5
+            # Extract the period from the xlsx --> should be removed with datepicker
             df['week'] = pd.read_excel(
                 excel_file, sheet_name, header=None, usecols=[2], nrows=5).iloc[-1, 0]
 
