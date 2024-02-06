@@ -9,8 +9,35 @@ class ExcelToSQLite():
         self.sqlite_db_path = "database.db"
 
     def process_anacamarge_synthese_xlsx(self, excel_file):
-        df = pd.read_excel(excel_file)
-        print(df)
+        df = pd.read_excel(excel_file, header=[2, 3])
+        df.rename(
+            columns={
+                'Unnamed: 5': df.columns[4],
+                'Unnamed: 6': df.columns[4],
+                'Unnamed: 8': df.columns[7],
+                'Unnamed: 9': df.columns[7],
+                'Unnamed: 11': df.columns[10],
+                'Unnamed: 12': df.columns[10],
+            }, inplace=True)
+        column_names = [
+            ' '.join(filter(pd.notna, col)) for col in df.columns]
+        df.columns = [col.replace('.', '') for col in column_names]
+        df = df.drop([df.columns[0], df.columns[3]], axis=1)
+        df.rename(
+            columns={
+                'Unnamed: 1_level_0 Unnamed: 1_level_1': 'Id',
+                'Unnamed: 2_level_0 Unnamed: 2_level_1': 'Category'
+            }, inplace=True)
+        df = df.iloc[:-2]
+        connection = sqlite3.connect(self.sqlite_db_path)
+        df.to_sql(name="anacamarge_synthese", con=connection,
+                  if_exists="append", index=False)
+
+        df['upload_date'] = pd.to_datetime(
+            datetime.today().strftime('%d-%m-%Y'))
+
+        connection.commit()
+        connection.close()
 
     def process_casse_caroline_xlsx(self, excel_file):
         sheet_names = pd.ExcelFile(excel_file).sheet_names
