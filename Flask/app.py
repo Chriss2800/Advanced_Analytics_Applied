@@ -1,27 +1,33 @@
 import os
-from flask import Flask, render_template
-from flask_wtf import FlaskForm
-from wtforms import FileField, SubmitField
 import pandas as pd
+
+from flask import Flask, render_template, request
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileRequired
+from wtforms import SubmitField
+
+from excel_to_sql import ExcelToSQLite
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
 
 FILE_LIST = [
-    'ANACAMARGE_SYNTHESE',
-    'CA BENCH REPORTING FACTORIE',
-    'CA HT CAROLINE',
-    'CA MARKET CAROLINE SUPER',
-    'CASSE CAROLINE',
+    'ANACAMARGE_SYNTHESE.xlsx',
+    'CA BENCH REPORTING FACTORIE.pdf',
+    'CA HT CAROLINE.pdf',
+    'CA MARKET CAROLINE SUPER.pdf',
+    'CASSE CAROLINE.xlsx',
 ]
+
+excel_service = ExcelToSQLite()
 
 
 class UploadFileForm(FlaskForm):
-    num_files = 5  # Anzahl der Dateifelder
-
-    for i in range(num_files):
-        locals()[f'file{i}'] = FileField(FILE_LIST[i])
-
+    file1 = FileField(FILE_LIST[0])
+    file2 = FileField(FILE_LIST[1])
+    file3 = FileField(FILE_LIST[2])
+    file4 = FileField(FILE_LIST[3])
+    file5 = FileField(FILE_LIST[4])
     submit = SubmitField("Upload File")
 
 
@@ -32,21 +38,10 @@ def home():
     form = UploadFileForm()
 
     if form.validate_on_submit():
-        for i in range(form.num_files):
-            file_field = getattr(form, f'file{i}')
-            file = file_field.data
-            if file:
-                 for sheet_number in range(1, 7):
-                    sheet_name = f'Sheet{sheet_number}'
-                    df = pd.read_excel(file, sheet_name, header=6)
-                    df = df.loc[:, ~df.columns.str.contains(
-                        "Unnamed: 0|Unnamed: 1|Unnamed: 4|Unnamed: 6")]
-                    df.rename(columns={'Unnamed: 2': "Index"}, inplace=True)
-                    html_table = df.to_html(index=False)
-                # df = pd.read_excel(file)
-               
+        file5 = request.files['file5']
+        excel_service.process_casse_caroline_xlsx(file5)
 
-    return render_template("index.html", form=form, html_table=html_table)
+    return render_template("index.html", form=form, html_table=html_table, file_list=FILE_LIST)
 
 
 if __name__ == '__main__':

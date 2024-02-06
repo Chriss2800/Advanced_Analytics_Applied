@@ -17,14 +17,27 @@
             </div>
         </div>
         <div class="row ">
-            <form class="form-inline " method="post " enctype="multipart/form-data ">
-                {{ form.hidden_tag() }} {% for field in form if 'file' in field.name %}
-                <div class="form-group mt-3 ">
-                    <label for="{{ field.id }} " class="sr-only ">{{ field.label }}</label> {{ field(class="form-control ") }}
-                </div>
-                {% endfor %}
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
 
-                <button type="submit " class="btn btn-primary mt-3 ">Upload</button>
+                <!-- File Upload Fields -->
+                <label for="{{ form.file1.id }}">{{ file_list[0] }}</label> {{ form.file1(class="form-control") }}
+                <br>
+
+                <label for="{{ form.file2.id }}">{{ file_list[1] }}</label> {{ form.file2(class="form-control") }}
+                <br>
+
+                <label for="{{ form.file3.id }}">{{ file_list[2] }}</label> {{ form.file3(class="form-control") }}
+                <br>
+
+                <label for="{{ form.file4.id }}">{{ file_list[3] }}</label> {{ form.file4(class="form-control") }}
+                <br>
+
+                <label for="{{ form.file5.id }}">{{ file_list[4] }}</label> {{ form.file5(class="form-control") }}
+                <br>
+
+                <!-- Submit Button -->
+                {{ form.submit(class="btn btn-primary") }}
             </form>
         </div>
     </div>
