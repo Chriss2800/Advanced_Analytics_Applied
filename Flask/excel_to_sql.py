@@ -47,20 +47,37 @@ class FileToSQLite():
         pass
 
     def process_ca_ht_caroline_pdf(self, pdf_file):
-        df = tabula.read_pdf(pdf_file,
-                             pages='all', multiple_tables=False)[0]
-        df['Rayon'].fillna(method='ffill', inplace=True)
-        df['upload_date'] = pd.to_datetime(
-            datetime.today().strftime('%d-%m-%Y'))
-        connection = sqlite3.connect(self.sqlite_db_path)
-        df.to_sql(name="ca_ht_caroline", con=connection,
-                  if_exists="append", index=False)
+        try:
+            df = tabula.read_pdf(pdf_file,
+                                 pages='all', multiple_tables=False)[0]
+            df['Rayon'].fillna(method='ffill', inplace=True)
+            df['upload_date'] = pd.to_datetime(
+                datetime.today().strftime('%d-%m-%Y'))
+            connection = sqlite3.connect(self.sqlite_db_path)
+            df.to_sql(name="ca_ht_caroline", con=connection,
+                      if_exists="append", index=False)
 
-        connection.commit()
-        connection.close()
+            connection.commit()
+            connection.close()
+
+        except Exception as e:
+            print(f"Error: {e}")
 
     def process_ca_market_caroline_super_pdf(self, pdf_file):
-        pass
+        try:
+            df = tabula.read_pdf(pdf_file, pages='all',
+                                 multiple_tables=False)[0]
+            df['upload_date'] = pd.to_datetime(
+                datetime.today().strftime('%d-%m-%Y'))
+            connection = sqlite3.connect(self.sqlite_db_path)
+            df.to_sql(name="ca_market_caroline_super", con=connection,
+                      if_exists="append", index=False)
+
+            connection.commit()
+            connection.close()
+
+        except Exception as e:
+            print(f"Error: {e}")
 
     def process_casse_caroline_xlsx(self, excel_file):
         try:
