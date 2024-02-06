@@ -32,8 +32,12 @@ class UploadFileForm(FlaskForm):
 
 
 @app.route('/', methods=['GET', 'POST'])
-@app.route('/home', methods=['GET', 'POST'])
 def home():
+    return render_template("home.html")
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
     form = UploadFileForm()
     success_list = []
 
@@ -62,14 +66,14 @@ def home():
             session['success_list'] = success_list
         return redirect(url_for('download'))
 
-    return render_template("index.html", form=form, file_list=FILE_LIST)
+    return render_template("upload.html", form=form, file_list=FILE_LIST)
+
 
 @app.route('/download', methods=['GET', 'POST'])
 def download():
     success_list = session.get('success_list', [])
 
     return render_template("download.html", success_list=success_list)
-
 
 
 if __name__ == '__main__':

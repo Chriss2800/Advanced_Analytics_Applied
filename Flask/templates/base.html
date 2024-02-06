@@ -21,20 +21,19 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" style="background-color: transparent;">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">Navbar</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='img/carrefour_icon.png') }}" alt="Example Image" width="80" height="50"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
-              <a class="nav-link" href="#">Features</a>
-              <a class="nav-link" href="#">Pricing</a>
-              <a class="nav-link disabled">Disabled</a>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">Home</a>
+                    <a class="nav-link" href="{{ url_for('upload') }}">Upload</a>
+                    <a class="nav-link" href="{{ url_for('download') }}">Download</a>
+                </div>
             </div>
-          </div>
         </div>
-      </nav>
+    </nav>
     <div class="parallax-container" style="background-image: url('{{ url_for('static', filename='img/carrefour_parallax.jpg') }}');">
         <div class="parallax-content">
             <h1 class="parallax-heading">Carrefour</h1>
