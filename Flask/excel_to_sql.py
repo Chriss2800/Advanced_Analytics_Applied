@@ -31,12 +31,11 @@ class FileToSQLite():
                     'Unnamed: 2_level_0 Unnamed: 2_level_1': 'Category'
                 }, inplace=True)
             df = df.iloc[:-2]
+            df['upload_date'] = pd.to_datetime(
+                datetime.today().strftime('%d-%m-%Y'))
             connection = sqlite3.connect(self.sqlite_db_path)
             df.to_sql(name="anacamarge_synthese", con=connection,
                       if_exists="append", index=False)
-
-            df['upload_date'] = pd.to_datetime(
-                datetime.today().strftime('%d-%m-%Y'))
 
             connection.commit()
             connection.close()
@@ -48,7 +47,17 @@ class FileToSQLite():
         pass
 
     def process_ca_ht_caroline_pdf(self, pdf_file):
-        pass
+        df = tabula.read_pdf(pdf_file,
+                             pages='all', multiple_tables=False)[0]
+        df['Rayon'].fillna(method='ffill', inplace=True)
+        df['upload_date'] = pd.to_datetime(
+            datetime.today().strftime('%d-%m-%Y'))
+        connection = sqlite3.connect(self.sqlite_db_path)
+        df.to_sql(name="ca_ht_caroline", con=connection,
+                  if_exists="append", index=False)
+
+        connection.commit()
+        connection.close()
 
     def process_ca_market_caroline_super_pdf(self, pdf_file):
         pass
@@ -80,12 +89,3 @@ class FileToSQLite():
 
         except Exception as e:
             print(f"Error: {e}")
-
-
-file_service = FileToSQLite()
-dfs = tabula.read_pdf("CA BENCH REPORTING FACTORIE.pdf",
-                      pages=1, multiple_tables=False)
-df = dfs[0]
-df.columns = df.iloc[0]
-df = df.drop(0)
-print(type(df))
