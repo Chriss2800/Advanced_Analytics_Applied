@@ -21,7 +21,7 @@ FILE_LIST = [
 
 excel_service = ExcelToSQLite()
 
-
+#Input Form
 class UploadFileForm(FlaskForm):
     file1 = FileField(FILE_LIST[0])
     file2 = FileField(FILE_LIST[1])
@@ -34,18 +34,23 @@ class UploadFileForm(FlaskForm):
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
 def home():
-    html_table = ''
     form = UploadFileForm()
+    success_list = []  # List of sucessfull uploads
 
     if form.validate_on_submit():
         if request.files['file1'].filename == 'ANACAMARGE_SYNTHESE.xlsx':
             file1 = request.files['file1']
-            excel_service.process_anacamarge_synthese_xlsx(file1)
+            excel_service.process_anacamarge_synthese_xlsx(file1) # processing and commiting of excel file, see excel_to_sql.py
+            success_list.append(request.files['file1'].filename) #if sucessfull processed and uploaded, file name gets into the list of successfull uploads
+
         if request.files['file5'].filename == 'CASSE CAROLINE.xlsx':
             file5 = request.files['file5']
-            excel_service.process_casse_caroline_xlsx(file5)
-
-    return render_template("index.html", form=form, html_table=html_table, file_list=FILE_LIST)
+            excel_service.process_casse_caroline_xlsx(file5)# processing and commiting of excel file, see excel_to_sql.py
+            success_list.append(request.files['file5'].filename)#if sucessfull processed and uploaded, file name gets into the list of successfull uploads
+        
+   
+    # render index again while giving information about input form (form), file names (FILE_LIST) and a possible list of sucessfull uploads (success_list) if existing
+    return render_template("index.html", form=form, file_list=FILE_LIST, success_list=success_list)
 
 
 if __name__ == '__main__':
