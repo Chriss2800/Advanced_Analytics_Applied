@@ -17,10 +17,44 @@
             {% endif %}
         </div>
         <div class="row">
-            <div class="col-md-4">
-                <h1 class="headline">Home</h1>
-                <h2>OUR TEAM</h2>
+            <div class="col-md-12">
+                <h1 class="headline text-center">Home</h1>
+                <p class="info-text mb-3">Carrefour, a multinational retail giant, stands as one of the world's largest and most recognized supermarket chains. Founded in 1958 in France, Carrefour has grown into a global retail powerhouse with a widespread presence in over 30
+                    countries. Renowned for its diverse range of products, Carrefour operates hypermarkets, supermarkets, and convenience stores, catering to the diverse needs of consumers. The supermarket chain is known for its commitment to providing
+                    quality products at competitive prices, making it a preferred choice for shoppers worldwide. Carrefour emphasizes sustainability and social responsibility, actively engaging in initiatives to reduce its environmental footprint and
+                    contribute to the communities it serves. Carrefour has embraced digital innovation, leveraging technology to enhance the shopping experience for customers. <br><br> The company continually adapts to evolving consumer preferences, offering
+                    online shopping platforms and convenient delivery services. With a vast network of stores, Carrefour remains a significant player in the global retail landscape, offering a comprehensive selection of fresh produce, groceries, electronics,
+                    clothing, and household goods. Its commitment to customer satisfaction, coupled with a strong focus on sustainability, reinforces Carrefour's position as a leading supermarket chain worldwide. In addition to its retail operations,
+                    Carrefour plays an influential role in shaping industry standards, driving innovation, and setting benchmarks for responsible business practices in the dynamic realm of modern retail.</p>
+                <h1 class="headline text-center team-description">Our Team</h1>
             </div>
+        </div>
+        <div class="row text-center image-container">
+
+            <!-- Image and text 1 -->
+            <div class="col-md-3">
+                <img src="{{ url_for('static', filename='img/bastien.jpg') }}" alt="Bastien Deffradas" class="img-fluid rounded-circle" width="120" height="120">
+                <p class="mt-2"><b>Bastien Deffradas</b> <br> Business Background <br> Works at Carrefour</p>
+            </div>
+
+            <!-- Image and text 2 -->
+            <div class="col-md-3">
+                <img src="{{ url_for('static', filename='img/chris.jpg') }}" alt="Christoph Mattmann" class="img-fluid rounded-circle" width="120" height="120">
+                <p class="mt-2"><b>Christoph Mattmann</b> <br> Technical Background <br> Business Informatics (Data Science)</p>
+            </div>
+
+            <!-- Image and text 3 -->
+            <div class="col-md-3">
+                <img src="{{ url_for('static', filename='img/dominik.jpg') }}" alt="Dominik Hahn" class="img-fluid rounded-circle" width="120" height="120">
+                <p class="mt-2"><b>Dominik Hahn</b> <br> Technical Background <br> Data Science Researcher</p>
+            </div>
+
+            <!-- Image and text 4 -->
+            <div class="col-md-3">
+                <img src="{{ url_for('static', filename='img/kilian.jpg') }}" alt="Kilian Pinto" class="img-fluid rounded-circle" width="120" height="120">
+                <p class="mt-2"><b>Kilian Pinto</b> <br> Business Background <br> Works at La Fermière</p>
+            </div>
+
         </div>
     </div>
 

@@ -64,3 +64,20 @@ body {
 .week-picker {
     margin-bottom: 15px;
 }
+
+.max-size {
+    height: 80vh;
+}
+
+.info-text {
+    text-align: justify;
+}
+
+.team-description {
+    margin-top: 100px !important;
+    margin-bottom: 20px !important;
+}
+
+.image-container {
+    margin-bottom: 100px !important;
+}

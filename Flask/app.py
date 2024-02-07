@@ -38,8 +38,12 @@ class UploadFileForm(FlaskForm):
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    success_list = session.get('success_list', [])
-    return render_template("home.html", success_list=success_list)
+    try:
+        success_list = session.get('success_list', [])
+        session.pop('success_list')
+        return render_template("home.html", success_list=success_list)
+    except:
+        return render_template("home.html")
 
 
 @app.route('/upload', methods=['GET', 'POST'])
