@@ -2,23 +2,32 @@
 
 <body>
     <div class="container">
-        <!-- Information when a Upload was successfull -->
-        <div class="row">
-            {% if success_list %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                Following files got uploaded:
-                <ul>
-                    {% for file_name in success_list %}
-                    <li>{{ file_name }}</li>
-                    {% endfor %}
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endif %}
-        </div>
         <div class="row">
             <div class="col-md-4">
                 <h1 class="headline">Flask File Download</h1>
+            </div>
+            <div class="col-md-1">
+                <button id="upload_info" class="mt-2 btn btn-secondary">?</button>
+            </div>
+            <div class="col-md-3">
+                <div class="help-text" id="upload_help_text">Here you can download the different database tables (Excel).
+                    <br>The included table will then be downloaded as an Excel-File to your local system.
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <form action="#" method="POST">
+                    <label for="table">Select a table:</label>
+                    <br>
+                    <select name="table" id="table" class="download-table form-select">
+                        {% for table in table_names %}
+                            <option value="{{ table }}">{{ table }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <input type="submit" value="Submit" class="btn btn-primary">
+                </form>
             </div>
         </div>
     </div>

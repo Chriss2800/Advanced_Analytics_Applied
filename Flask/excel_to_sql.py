@@ -6,7 +6,7 @@ from datetime import datetime
 
 class FileToSQLite():
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.sqlite_db_path = "database.db"
 
     def process_anacamarge_synthese_xlsx(self, excel_file, selected_week):

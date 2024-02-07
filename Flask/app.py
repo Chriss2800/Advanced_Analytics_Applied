@@ -1,11 +1,14 @@
 import os
 import pandas as pd
 
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, send_file
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from wtforms import SubmitField, StringField
 
+from io import BytesIO
+
+from database_to_excel import SQLiteToFile
 from excel_to_sql import FileToSQLite
 
 app = Flask(__name__)
@@ -19,6 +22,7 @@ FILE_LIST = [
     'CASSE CAROLINE.xlsx',
 ]
 
+download_service = SQLiteToFile()
 file_service = FileToSQLite()
 
 
@@ -34,7 +38,8 @@ class UploadFileForm(FlaskForm):
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template("home.html")
+    success_list = session.get('success_list', [])
+    return render_template("home.html", success_list=success_list)
 
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -52,7 +57,8 @@ def upload():
             success_list.append(request.files['file1'].filename)
         if request.files['file2'].filename == 'CA BENCH REPORTING FACTORIE.pdf':
             file2 = request.files['file2']
-            file_service.process_ca_bench_reporting_factorie_pdf(file2, selected_week)
+            file_service.process_ca_bench_reporting_factorie_pdf(
+                file2, selected_week)
             success_list.append(request.files['file2'].filename)
         if request.files['file3'].filename == 'CA HT CAROLINE.pdf':
             file3 = request.files['file3']
@@ -60,26 +66,33 @@ def upload():
             success_list.append(request.files['file3'].filename)
         if request.files['file4'].filename == 'CA MARKET CAROLINE SUPER.pdf':
             file4 = request.files['file4']
-            file_service.process_ca_market_caroline_super_pdf(file4, selected_week)
+            file_service.process_ca_market_caroline_super_pdf(
+                file4, selected_week)
             success_list.append(request.files['file4'].filename)
         if request.files['file5'].filename == 'CASSE CAROLINE.xlsx':
             file5 = request.files['file5']
             file_service.process_casse_caroline_xlsx(file5, selected_week)
             success_list.append(request.files['file5'].filename)
-        
-            
 
-            session['success_list'] = success_list
-        return redirect(url_for('download'))
+        session['success_list'] = success_list
+        return redirect(url_for('home'))
 
     return render_template("upload.html", form=form, file_list=FILE_LIST)
 
 
 @app.route('/download', methods=['GET', 'POST'])
 def download():
-    success_list = session.get('success_list', [])
+    table_names = download_service.get_table_names()
 
-    return render_template("download.html", success_list=success_list)
+    if request.method == 'POST':
+        selected_table = request.form['table']
+        table_data = download_service.get_table_data(selected_table)
+        excel_data = BytesIO()
+        table_data.to_excel(excel_data, index=False, sheet_name='Sheet1')
+        excel_data.seek(0)
+        return send_file(excel_data, as_attachment=True, download_name=f'{selected_table}.xlsx')
+
+    return render_template("download.html", table_names=table_names)
 
 
 if __name__ == '__main__':

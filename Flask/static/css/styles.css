@@ -60,3 +60,7 @@ body {
     box-shadow: 0px 0px 5px #888;
     z-index: 1;
 }
+
+.week-picker {
+    margin-bottom: 15px;
+}
