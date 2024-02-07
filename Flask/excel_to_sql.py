@@ -9,7 +9,7 @@ class FileToSQLite():
     def __init__(self):
         self.sqlite_db_path = "database.db"
 
-    def process_anacamarge_synthese_xlsx(self, excel_file):
+    def process_anacamarge_synthese_xlsx(self, excel_file, selected_week):
         try:
             df = pd.read_excel(excel_file, header=[2, 3])
             df.rename(
@@ -33,6 +33,7 @@ class FileToSQLite():
             df = df.iloc[:-2]
             df['upload_date'] = pd.to_datetime(
                 datetime.today().strftime('%d-%m-%Y'))
+            df['report week'] = selected_week
             connection = sqlite3.connect(self.sqlite_db_path)
             df.to_sql(name="anacamarge_synthese", con=connection,
                       if_exists="append", index=False)
@@ -43,7 +44,7 @@ class FileToSQLite():
         except Exception as e:
             print(f"Error: {e}")
 
-    def process_ca_bench_reporting_factorie_pdf(self, pdf_file):
+    def process_ca_bench_reporting_factorie_pdf(self, pdf_file, selected_week):
         try:
             df = tabula.read_pdf(pdf_file, pages='all',
                                  multiple_tables=False)[0]
@@ -73,6 +74,7 @@ class FileToSQLite():
             df.columns = column_names
             df['upload_date'] = pd.to_datetime(
                 datetime.today().strftime('%d-%m-%Y'))
+            df['report week'] = selected_week
             connection = sqlite3.connect(self.sqlite_db_path)
             df.to_sql(name="ca_bench_reporting_factorie", con=connection,
                       if_exists="append", index=False)
@@ -83,13 +85,14 @@ class FileToSQLite():
         except Exception as e:
             print(f"Error: {e}")
 
-    def process_ca_ht_caroline_pdf(self, pdf_file):
+    def process_ca_ht_caroline_pdf(self, pdf_file, selected_week):
         try:
             df = tabula.read_pdf(pdf_file,
                                  pages='all', multiple_tables=False)[0]
             df['Rayon'].fillna(method='ffill', inplace=True)
             df['upload_date'] = pd.to_datetime(
                 datetime.today().strftime('%d-%m-%Y'))
+            df['report week'] = selected_week
             connection = sqlite3.connect(self.sqlite_db_path)
             df.to_sql(name="ca_ht_caroline", con=connection,
                       if_exists="append", index=False)
@@ -100,12 +103,13 @@ class FileToSQLite():
         except Exception as e:
             print(f"Error: {e}")
 
-    def process_ca_market_caroline_super_pdf(self, pdf_file):
+    def process_ca_market_caroline_super_pdf(self, pdf_file, selected_week):
         try:
             df = tabula.read_pdf(pdf_file, pages='all',
                                  multiple_tables=False)[0]
             df['upload_date'] = pd.to_datetime(
                 datetime.today().strftime('%d-%m-%Y'))
+            df['report week'] = selected_week
             connection = sqlite3.connect(self.sqlite_db_path)
             df.to_sql(name="ca_market_caroline_super", con=connection,
                       if_exists="append", index=False)
@@ -116,7 +120,7 @@ class FileToSQLite():
         except Exception as e:
             print(f"Error: {e}")
 
-    def process_casse_caroline_xlsx(self, excel_file):
+    def process_casse_caroline_xlsx(self, excel_file, selected_week):
         try:
             sheet_names = pd.ExcelFile(excel_file).sheet_names
 
@@ -127,12 +131,9 @@ class FileToSQLite():
                     "Unnamed: 0|Unnamed: 1|Unnamed: 4|Unnamed: 6")]
                 df.rename(columns={'Unnamed: 2': "Index"}, inplace=True)
 
-                # Extract the period from the xlsx --> should be removed with datepicker
-                df['week'] = pd.read_excel(
-                    excel_file, sheet_name, header=None, usecols=[2], nrows=5).iloc[-1, 0]
-
                 df['upload_date'] = pd.to_datetime(
                     datetime.today().strftime('%d-%m-%Y'))
+                df['report week'] = selected_week
 
                 connection = sqlite3.connect(self.sqlite_db_path)
                 df.to_sql(name=f"casse_caroline_{sheet_names[sheet_number]}", con=connection,

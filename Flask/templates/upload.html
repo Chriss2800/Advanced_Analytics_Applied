@@ -49,7 +49,10 @@
 
                 <label for="{{ form.file5.id }}">{{ file_list[4] }}</label> {{ form.file5(class="form-control") }}
                 <br>
-
+                <label>Select week :
+                    <input type="week" id="date" name="date" required>
+                </label>
+                <hr>
                 <!-- Submit Button -->
                 {{ form.submit(class="btn btn-primary") }}
             </form>
