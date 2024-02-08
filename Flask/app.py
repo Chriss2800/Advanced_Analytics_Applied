@@ -91,10 +91,14 @@ def download():
     if request.method == 'POST':
         selected_table = request.form['table']
         table_data = download_service.get_table_data(selected_table)
-        excel_data = BytesIO()
-        table_data.to_excel(excel_data, index=False, sheet_name='Sheet1')
-        excel_data.seek(0)
-        return send_file(excel_data, as_attachment=True, download_name=f'{selected_table}.xlsx')
+        csv_data = BytesIO()
+        table_data.to_csv(csv_data, index=False, encoding="utf-8-sig")
+        csv_data.seek(0)
+        return send_file(csv_data,
+                         as_attachment=True,
+                         download_name=f'{selected_table}.csv',
+                         mimetype='text/csv',
+                         conditional=True)
 
     return render_template("download.html", table_names=table_names)
 
