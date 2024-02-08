@@ -90,6 +90,8 @@ class FileToSQLite():
             df = tabula.read_pdf(pdf_file,
                                  pages='all', multiple_tables=False)[0]
             df['Rayon'].fillna(method='ffill', inplace=True)
+            df = df[df.iloc[:, 0] != "Rayon"]
+            df.reset_index(drop=True)
             df['upload_date'] = pd.to_datetime(
                 datetime.today().strftime('%d-%m-%Y'))
             df['report week'] = selected_week
