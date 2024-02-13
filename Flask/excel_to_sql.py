@@ -2,7 +2,7 @@ import pandas as pd
 import sqlite3
 import tabula
 from datetime import datetime
-
+import re
 
 class FileToSQLite():
 
@@ -24,6 +24,9 @@ class FileToSQLite():
             column_names = [
                 ' '.join(filter(pd.notna, col)) for col in df.columns]
             df.columns = [col.replace('.', '') for col in column_names]
+            df.columns = df.columns.astype(str).str.replace('\n', ' ')
+
+
             df = df.drop([df.columns[0], df.columns[3]], axis=1)
             df.rename(
                 columns={
@@ -131,6 +134,7 @@ class FileToSQLite():
                 df = pd.read_excel(excel_file, sheet_name, header=6)
                 df = df.loc[:, ~df.columns.str.contains(
                     "Unnamed: 0|Unnamed: 1|Unnamed: 4|Unnamed: 6")]
+                df.columns = [re.sub(r'\s+', ' ', col) for col in df.columns]
                 df.rename(columns={'Unnamed: 2': "Index"}, inplace=True)
 
                 df['upload_date'] = pd.to_datetime(
