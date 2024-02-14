@@ -4,6 +4,7 @@ import tabula
 from datetime import datetime
 import re
 
+
 class FileToSQLite():
 
     def __init__(self) -> None:
@@ -25,7 +26,6 @@ class FileToSQLite():
                 ' '.join(filter(pd.notna, col)) for col in df.columns]
             df.columns = [col.replace('.', '') for col in column_names]
             df.columns = df.columns.astype(str).str.replace('\n', ' ')
-
 
             df = df.drop([df.columns[0], df.columns[3]], axis=1)
             df.rename(
@@ -127,6 +127,7 @@ class FileToSQLite():
 
     def process_casse_caroline_xlsx(self, excel_file, selected_week):
         try:
+            dfs = []
             sheet_names = pd.ExcelFile(excel_file).sheet_names
 
             for sheet_number in range(len(sheet_names)):
@@ -137,16 +138,20 @@ class FileToSQLite():
                 df.columns = [re.sub(r'\s+', ' ', col) for col in df.columns]
                 df.rename(columns={'Unnamed: 2': "Index"}, inplace=True)
 
+                df['sheet_name'] = sheet_name
                 df['upload_date'] = pd.to_datetime(
-                    datetime.today().strftime('%d-%m-%Y'))
+                    datetime.today().strftime('%d-%m-%Y'), dayfirst=True)
                 df['report week'] = selected_week
+                dfs.append(df)
 
-                connection = sqlite3.connect(self.sqlite_db_path)
-                df.to_sql(name=f"casse_caroline_{sheet_names[sheet_number]}", con=connection,
-                          if_exists="append", index=False)
+            result_df = pd.concat(dfs, ignore_index=True)
 
-                connection.commit()
-                connection.close()
+            connection = sqlite3.connect(self.sqlite_db_path)
+            result_df.to_sql(name="casse_caroline", con=connection,
+                             if_exists="append", index=False)
+
+            connection.commit()
+            connection.close()
 
         except Exception as e:
             print(f"Error: {e}")
