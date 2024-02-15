@@ -37,6 +37,11 @@ class FileToSQLite():
             df['upload_date'] = pd.to_datetime(
                 datetime.today().strftime('%d-%m-%Y'))
             df['report week'] = selected_week
+
+            # multiply k€ by 1000 for visualization
+            columns_to_multiply = [col for col in df.columns if 'k€' in col]
+            df[columns_to_multiply] *= 1000
+            df.columns = df.columns.str.replace(' (k€)', '')
             connection = sqlite3.connect(self.sqlite_db_path)
             df.to_sql(name="anacamarge_synthese", con=connection,
                       if_exists="append", index=False)
@@ -78,6 +83,9 @@ class FileToSQLite():
             df['upload_date'] = pd.to_datetime(
                 datetime.today().strftime('%d-%m-%Y'))
             df['report week'] = selected_week
+            # columns_to_multiply = [col for col in df.columns if 'K€' in col]
+            # df[columns_to_multiply] *= 1000
+            # df.columns = df.columns.str.replace('K€', '€')
             connection = sqlite3.connect(self.sqlite_db_path)
             df.to_sql(name="ca_bench_reporting_factorie", con=connection,
                       if_exists="append", index=False)
