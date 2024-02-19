@@ -10,6 +10,14 @@ class FileToSQLite():
     def __init__(self) -> None:
         self.sqlite_db_path = "database.db"
 
+    def clean_cell_values(self, cell):
+        if pd.notna(cell):
+            cell = str(cell).replace('%', '').replace(
+                '(', '').replace(')', '').replace(' ', '').replace(',', '.')
+            return float(cell)
+        else:
+            return cell
+
     def process_anacamarge_synthese_xlsx(self, excel_file, selected_week):
         try:
             df = pd.read_excel(excel_file, header=[2, 3])
@@ -80,12 +88,14 @@ class FileToSQLite():
                 "Actualisé Mois CA TTC % Evol",
             ]
             df.columns = column_names
+            df_cleaned = df.iloc[:, 1:].applymap(self.clean_cell_values)
+            df = pd.concat([df.iloc[:, :1], df_cleaned], axis=1)
             df['upload_date'] = pd.to_datetime(
                 datetime.today().strftime('%d-%m-%Y'))
             df['report week'] = selected_week
-            # columns_to_multiply = [col for col in df.columns if 'K€' in col]
-            # df[columns_to_multiply] *= 1000
-            # df.columns = df.columns.str.replace('K€', '€')
+            columns_to_multiply = [col for col in df.columns if 'K€' in col]
+            df[columns_to_multiply] *= 1000
+            df.columns = df.columns.str.replace('K€', '€')
             connection = sqlite3.connect(self.sqlite_db_path)
             df.to_sql(name="ca_bench_reporting_factorie", con=connection,
                       if_exists="append", index=False)
