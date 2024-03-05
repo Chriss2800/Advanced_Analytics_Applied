@@ -54,10 +54,12 @@ def upload():
     if form.validate_on_submit():
         if request.method == 'POST':
             selected_week = request.form.get('date')
+            selected_market = request.form.get('market')
             print(selected_week)
-        if request.files['file1'].filename == 'ANACAMARGE_SYNTHESE.xlsx':
+        if request.files['file1'].filename.startswith('ANACAMARGE_SYNTHESE') and request.files['file1'].filename.endswith('.xlsx'):
             file1 = request.files['file1']
-            file_service.process_anacamarge_synthese_xlsx(file1, selected_week)
+            file_service.process_anacamarge_synthese_xlsx(
+                file1, selected_week, selected_market)
             success_list.append(request.files['file1'].filename)
         if request.files['file2'].filename == 'CA BENCH REPORTING FACTORIE.pdf':
             file2 = request.files['file2']

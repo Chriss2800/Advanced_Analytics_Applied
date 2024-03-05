@@ -18,7 +18,7 @@ class FileToSQLite():
         else:
             return cell
 
-    def process_anacamarge_synthese_xlsx(self, excel_file, selected_week):
+    def process_anacamarge_synthese_xlsx(self, excel_file, selected_week, selected_market):
         try:
             df = pd.read_excel(excel_file, header=[2, 3])
             df.rename(
@@ -45,11 +45,13 @@ class FileToSQLite():
             df['upload_date'] = pd.to_datetime(
                 datetime.today().strftime('%d-%m-%Y'))
             df['report week'] = selected_week
+            df['market'] = selected_market
 
             # multiply k€ by 1000 for visualization
             columns_to_multiply = [col for col in df.columns if 'k€' in col]
             df[columns_to_multiply] *= 1000
             df.columns = df.columns.str.replace(' (k€)', '')
+
             connection = sqlite3.connect(self.sqlite_db_path)
             df.to_sql(name="anacamarge_synthese", con=connection,
                       if_exists="append", index=False)

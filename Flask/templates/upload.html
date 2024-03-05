@@ -40,6 +40,18 @@
                 <br>
                 <!-- File Upload Fields -->
                 <label for="{{ form.file1.id }}">{{ file_list[0] }}</label> {{ form.file1(class="form-control") }}
+                <!-- Dropdown Field -->
+                <div class="mt-3"></div>
+                <label for="market">Select an Store for which the Anacamarge File is uploaded:</label>
+                <select class="form-control" id="market" name="market">
+                    <option value="Bercy-Charenton">Bercy-Charenton</option>
+                    <option value="Cusset">Cusset</option>
+                    <option value="Gueret">Gueret</option>
+                    <option value="Montlucon">Montlucon</option>
+                    <option value="Montreuil">Montreuil</option>
+                    <option value="Moulins">Moulins</option>
+                    <option value="Noisy Le Grand">Noisy Le Grand</option>
+                </select>
                 <br>
 
                 <label for="{{ form.file2.id }}">{{ file_list[1] }}</label> {{ form.file2(class="form-control") }}
