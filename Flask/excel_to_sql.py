@@ -185,6 +185,8 @@ class FileToSQLite():
                 df = df.iloc[:, :30]
                 df.replace(to_replace=r',', value='.',
                            regex=True, inplace=True)
+                df = df.drop(
+                    columns=[col for col in df.columns if col.strip() == '' or col.strip() == '.1'])
             elif file_name.endswith(".xlsx"):
                 df = pd.read_excel(input_file, header=17)
 
@@ -194,7 +196,6 @@ class FileToSQLite():
             connection = sqlite3.connect(self.sqlite_db_path)
             df.to_sql(name="extraction_parametrable", con=connection,
                       if_exists="append", index=False)
-
             connection.commit()
             connection.close()
 
