@@ -36,6 +36,12 @@ class UploadFileForm(FlaskForm):
     submit = SubmitField("Upload File")
 
 
+class UploadExtractionFileForm(FlaskForm):
+    file1 = FileField("Extraction")
+    week = StringField('Week')
+    submit = SubmitField("Upload File")
+
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     try:
@@ -84,6 +90,27 @@ def upload():
         return redirect(url_for('home'))
 
     return render_template("upload.html", form=form, file_list=FILE_LIST)
+
+
+@app.route('/upload_extraction', methods=['GET', 'POST'])
+def upload_extraction():
+    form = UploadExtractionFileForm()
+    success_list = []
+
+    if form.validate_on_submit():
+        if request.method == 'POST':
+            selected_week = request.form.get('date')
+        if request.files['file1'].filename != None:
+            file1 = request.files['file1']
+            file_name = request.files['file1'].filename
+            file_service.process_extraction_parametrable(
+                file1, file_name, selected_week)
+            success_list.append(request.files['file1'].filename)
+
+        session['success_list'] = success_list
+        return redirect(url_for('home'))
+
+    return render_template("upload_extraction.html", form=form)
 
 
 @app.route('/download', methods=['GET', 'POST'])

@@ -1,8 +1,9 @@
-import pandas as pd
 import sqlite3
 import tabula
-from datetime import datetime
 import re
+import pandas as pd
+
+from datetime import datetime
 
 
 class FileToSQLite():
@@ -169,6 +170,30 @@ class FileToSQLite():
             connection = sqlite3.connect(self.sqlite_db_path)
             result_df.to_sql(name="casse_caroline", con=connection,
                              if_exists="append", index=False)
+
+            connection.commit()
+            connection.close()
+
+        except Exception as e:
+            print(f"Error: {e}")
+
+    def process_extraction_parametrable(self, input_file, file_name, selected_week):
+        try:
+            df = None
+            if file_name.endswith(".csv"):
+                df = pd.read_csv(input_file, sep=';', header=17)
+                df = df.iloc[:, :30]
+                df.replace(to_replace=r',', value='.',
+                           regex=True, inplace=True)
+            elif file_name.endswith(".xlsx"):
+                df = pd.read_excel(input_file, header=17)
+
+            df['upload_date'] = pd.to_datetime(
+                datetime.today().strftime('%d-%m-%Y'))
+            df['report week'] = selected_week
+            connection = sqlite3.connect(self.sqlite_db_path)
+            df.to_sql(name="extraction_parametrable", con=connection,
+                      if_exists="append", index=False)
 
             connection.commit()
             connection.close()
