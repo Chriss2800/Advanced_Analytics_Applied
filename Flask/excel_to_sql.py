@@ -187,6 +187,8 @@ class FileToSQLite():
                            regex=True, inplace=True)
                 df = df.drop(
                     columns=[col for col in df.columns if col.strip() == '' or col.strip() == '.1'])
+                df.columns = df.columns.str.strip()
+                df = df[~(df['PAHT'].str.strip() == "") | df['PAHT'].isna()]
             elif file_name.endswith(".xlsx"):
                 df = pd.read_excel(input_file, header=17)
 
