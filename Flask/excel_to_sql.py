@@ -189,6 +189,12 @@ class FileToSQLite():
                     columns=[col for col in df.columns if col.strip() == '' or col.strip() == '.1'])
                 df.columns = df.columns.str.strip()
                 df = df[~(df['PAHT'].str.strip() == "") | df['PAHT'].isna()]
+                float_columns = ['PAHT', 'PV Mag', 'PV Mag HT', 'TVA en %', 'Quantité vendue *',
+                 'Montant achat HT *', 'Montant vente TTC *', 'Marge en valeur',
+                 'Marge en %', 'Stock en quantité']
+
+                df[float_columns] = df[float_columns].astype(float)
+
             elif file_name.endswith(".xlsx"):
                 df = pd.read_excel(input_file, header=17)
 
