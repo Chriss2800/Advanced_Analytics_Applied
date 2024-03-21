@@ -158,7 +158,6 @@ class FileToSQLite():
                     "Unnamed: 0|Unnamed: 1|Unnamed: 4|Unnamed: 6")]
                 df.columns = [re.sub(r'\s+', ' ', col) for col in df.columns]
                 df.rename(columns={'Unnamed: 2': "Index"}, inplace=True)
-
                 df['sheet_name'] = sheet_name
                 df['upload_date'] = pd.to_datetime(
                     datetime.today().strftime('%d-%m-%Y'), dayfirst=True)
@@ -185,22 +184,43 @@ class FileToSQLite():
                 df = df.iloc[:, :30]
                 df.replace(to_replace=r',', value='.',
                            regex=True, inplace=True)
+                df.columns = df.columns.str.strip()
                 df = df.drop(
                     columns=[col for col in df.columns if col.strip() == '' or col.strip() == '.1'])
-                df.columns = df.columns.str.strip()
                 df = df[~(df['PAHT'].str.strip() == "") | df['PAHT'].isna()]
-                float_columns = ['PAHT', 'PV Mag', 'PV Mag HT', 'TVA en %', 'Quantité vendue *',
+                columns_to_remove = ['PV Mag', 'Type Qté', 'Article Libellé Court', 'Type PA', 'SRP', 'Indicateur PVC', 'Type PV Mag', 'Indicateur PV Mag', 'TVA en %', 'Type Qté', 'PV Mag HT', 'Typologie', 'Libellé Unité de Besoin', 'Libellé UG','IFLS' ]
+
+                for column in columns_to_remove:
+                    if column in df.columns:
+                        df = df.drop(column, axis=1)
+
+                float_columns = ['PAHT', 'Quantité vendue *',
                  'Montant achat HT *', 'Montant vente TTC *', 'Marge en valeur',
                  'Marge en %', 'Stock en quantité']
 
-                df[float_columns] = df[float_columns].astype(float)
+                for column in float_columns:
+                    if column in df.columns:
+                        df[column] = df[column].replace("  ", 0)
+                        try:
+                            df[column] = df[column].astype(float)
+                        except ValueError as e:
+                            print(f"Error: {e}")
+
 
             elif file_name.endswith(".xlsx"):
                 df = pd.read_excel(input_file, header=17)
+                df.columns = df.columns.str.strip()
+                df = df.dropna(axis=1, how='all')
+
+                print(df)
+
 
             df['upload_date'] = pd.to_datetime(
                 datetime.today().strftime('%d-%m-%Y'))
-            df['report week'] = selected_week
+            year, week_number = map(int, selected_week.split('-W'))
+            df['report week'] = week_number
+            df['report year'] = year
+            print(type(selected_week))
             connection = sqlite3.connect(self.sqlite_db_path)
             df.to_sql(name="extraction_parametrable", con=connection,
                       if_exists="append", index=False)

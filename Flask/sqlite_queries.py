@@ -41,6 +41,6 @@ class SQLQueries():
 
 if __name__ == '__main__':
     sql = SQLQueries()
-    # sql.drop_table("extraction_parametrable")
-    sql.check_for_duplicates("extraction_parametrable")
+    sql.drop_table("extraction_parametrable")
+    # sql.check_for_duplicates("extraction_parametrable")
     # sql.drop_duplicates("extraction_parametrable")
