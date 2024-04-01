@@ -1,0 +1,41 @@
+{% extends 'base.html' %} {% block header %} {% endblock %} {% block content %}
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <h1 class="headline">Predict Future Revenue</h1>
+            </div>
+            <div class="col-md-1">
+                <button id="upload_info" class="mt-2 btn btn-secondary">?</button>
+            </div>
+            <div class="col-md-3">
+                <div class="help-text" id="upload_help_text">Here you can let the machine learning model predict future Revenues.
+                </div>
+            </div>
+        </div>
+        <div class="row ">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <hr>
+                <label>Select week :
+                    <input class="week-picker form-control" type="week" id="date" name="date" required>
+                </label>
+                <br>
+                <label>Mean Revenue last 21days (Optional):
+                    {{ form.revenue(class="form-control") }}
+                </label>
+                <br>
+                <!-- Submit Button -->
+                {{ form.submit(class="btn btn-primary mt-3") }}
+            </form>
+        </div>
+    </div>
+    {% if table %}
+    <div class="container">
+        <!-- Render the DataFrame table -->
+        {{ table | safe }}
+    </div>
+    {% endif %}
+</body>
+{% endblock %}

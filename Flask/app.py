@@ -1,10 +1,16 @@
 import os
+import pickle
+
+import numpy as np
 import pandas as pd
+
+from datetime import datetime, timedelta
 
 from flask import Flask, render_template, request, session, redirect, url_for, send_file
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileRequired
-from wtforms import SubmitField, StringField
+from flask_wtf.file import FileField
+from wtforms import SubmitField, StringField, IntegerField
+from wtforms.validators import Optional
 
 from io import BytesIO
 
@@ -40,6 +46,20 @@ class UploadExtractionFileForm(FlaskForm):
     file1 = FileField("Extraction")
     week = StringField('Week')
     submit = SubmitField("Upload File")
+
+
+class PredictionForm(FlaskForm):
+    week = StringField('Week')
+    revenue = IntegerField("Mean_Revenue", validators=[Optional()])
+    submit = SubmitField("Calculate Prediction")
+
+
+def get_dates_from_week(year_week_str):
+    year, week_num = map(int, year_week_str.split('-W'))
+    start_of_week = datetime.strptime(
+        f'{year}-W{week_num}-1', '%Y-W%W-%w').date()
+    dates_in_week = [start_of_week + timedelta(days=i) for i in range(7)]
+    return dates_in_week
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -111,6 +131,53 @@ def upload_extraction():
         return redirect(url_for('home'))
 
     return render_template("upload_extraction.html", form=form)
+
+
+@app.route('/prediction', methods=['GET', 'POST'])
+def prediction():
+    form = PredictionForm()
+    predictions = []
+    predicted_df = []
+    if form.validate_on_submit():
+        selected_week = request.form.get('date')
+        prediction_dates = get_dates_from_week(selected_week)
+        mean_revenue = form.revenue.data
+        if mean_revenue is not None:
+            with open('../MachineLearning/model_mean.pkl', 'rb') as file:
+                model = pickle.load(file)
+            prediction_df = pd.DataFrame({
+                "Year": [date.year for date in prediction_dates],
+                "Month": [date.month for date in prediction_dates],
+                "Day": [date.day for date in prediction_dates],
+                "Day_of_week": [date.weekday() for date in prediction_dates],
+                "Revenue Mean": [mean_revenue for i in range(len(prediction_dates))]
+            })
+            predictions = model.predict(prediction_df)
+        else:
+            with open('../MachineLearning/model.pkl', 'rb') as file:
+                model = pickle.load(file)
+            prediction_df = pd.DataFrame({
+                "Year": [date.year for date in prediction_dates],
+                "Month": [date.month for date in prediction_dates],
+                "Day": [date.day for date in prediction_dates],
+                "Day_of_week": [date.weekday() for date in prediction_dates],
+            })
+            predictions = model.predict(prediction_df)
+        if len(predictions) != 0:
+            prediction_dates = np.append(prediction_dates, "Summe")
+            predictions = np.append(predictions, sum(predictions))
+            predicted_df = pd.DataFrame({
+                'Date': prediction_dates,
+                'Predicted Revenue': [round(prediction, 2) for prediction in predictions]
+            })
+            html_table = predicted_df.to_html(
+                classes=["table", "mt-3", "table-hover"], index=False)
+            html_table = html_table.replace(
+                '<th>', '<th style="text-align: center;">')
+            html_table = html_table.replace(
+                '<tbody>', '<tbody style="text-align: center;">')
+            return render_template("prediction.html", form=form, table=html_table)
+    return render_template("prediction.html", form=form)
 
 
 @app.route('/download', methods=['GET', 'POST'])
