@@ -143,7 +143,7 @@ def prediction():
         prediction_dates = get_dates_from_week(selected_week)
         mean_revenue = form.revenue.data
         if mean_revenue is not None:
-            with open('../MachineLearning/model_mean.pkl', 'rb') as file:
+            with open('../MachineLearning/lgbm_model_mean.pkl', 'rb') as file:
                 model = pickle.load(file)
             prediction_df = pd.DataFrame({
                 "Year": [date.year for date in prediction_dates],
@@ -154,7 +154,7 @@ def prediction():
             })
             predictions = model.predict(prediction_df)
         else:
-            with open('../MachineLearning/model.pkl', 'rb') as file:
+            with open('../MachineLearning/lgbm_model.pkl', 'rb') as file:
                 model = pickle.load(file)
             prediction_df = pd.DataFrame({
                 "Year": [date.year for date in prediction_dates],
