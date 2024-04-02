@@ -22,6 +22,10 @@
                     <input class="week-picker form-control" type="week" id="date" name="date" required>
                 </label>
                 <br>
+                <div>
+                    {{ form.dropdown.label }} {{ form.dropdown(class="form-control") }}
+                </div>
+                <br>
                 <label>Mean Revenue last 21days (Optional):
                     {{ form.revenue(class="form-control") }}
                 </label>

@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, request, session, redirect, url_for, send_file
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField
-from wtforms import SubmitField, StringField, IntegerField
+from wtforms import SubmitField, StringField, IntegerField, SelectField
 from wtforms.validators import Optional
 
 from io import BytesIO
@@ -50,6 +50,8 @@ class UploadExtractionFileForm(FlaskForm):
 
 class PredictionForm(FlaskForm):
     week = StringField('Week')
+    dropdown = SelectField('Dropdown', choices=[(
+        'Lindt', 'Lindt'), ("L'Oreal", "L'Oreal")])
     revenue = IntegerField("Mean_Revenue", validators=[Optional()])
     submit = SubmitField("Calculate Prediction")
 
@@ -141,10 +143,16 @@ def prediction():
     if form.validate_on_submit():
         selected_week = request.form.get('date')
         prediction_dates = get_dates_from_week(selected_week)
+        company = form.dropdown.data
         mean_revenue = form.revenue.data
         if mean_revenue is not None:
-            with open('../MachineLearning/lgbm_model_mean.pkl', 'rb') as file:
-                model = pickle.load(file)
+            model = None
+            if company == "Lindt":
+                with open('../MachineLearning/lgbm_model_mean.pkl', 'rb') as file:
+                    model = pickle.load(file)
+            else:
+                with open('../MachineLearning/lgbm_model_mean_loreal.pkl', 'rb') as file:
+                    model = pickle.load(file)
             prediction_df = pd.DataFrame({
                 "Year": [date.year for date in prediction_dates],
                 "Month": [date.month for date in prediction_dates],
@@ -154,8 +162,13 @@ def prediction():
             })
             predictions = model.predict(prediction_df)
         else:
-            with open('../MachineLearning/lgbm_model.pkl', 'rb') as file:
-                model = pickle.load(file)
+            model = None
+            if company == "Lindt":
+                with open('../MachineLearning/lgbm_model.pkl', 'rb') as file:
+                    model = pickle.load(file)
+            else:
+                with open('../MachineLearning/lgbm_model_loreal.pkl', 'rb') as file:
+                    model = pickle.load(file)
             prediction_df = pd.DataFrame({
                 "Year": [date.year for date in prediction_dates],
                 "Month": [date.month for date in prediction_dates],
