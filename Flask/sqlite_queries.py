@@ -50,6 +50,6 @@ if __name__ == '__main__':
     sql = SQLQueries()
     # sql.update_values("anacamarge_synthese", "report week",
     #                   "2024-W10", "2024-W03")
-    sql.drop_table("anacamarge_synthese")
+    # sql.drop_table("anacamarge_synthese")
     # sql.check_for_duplicates("extraction_parametrable")
     # sql.drop_duplicates("extraction_parametrable")
