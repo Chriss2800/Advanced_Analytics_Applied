@@ -38,9 +38,18 @@ class SQLQueries():
 
         self.conn.close()
 
+    def update_values(self, table, column, old_value, new_value):
+        cursor = self.conn.cursor()
+        cursor.execute(
+            f"UPDATE {table} SET {column} = {new_value} WHERE {column} = {old_value}")
+        self.conn.commit()
+        self.conn.close()
+
 
 if __name__ == '__main__':
     sql = SQLQueries()
-    sql.drop_table("extraction_parametrable")
+    # sql.update_values("anacamarge_synthese", "report week",
+    #                   "2024-W10", "2024-W03")
+    sql.drop_table("anacamarge_synthese")
     # sql.check_for_duplicates("extraction_parametrable")
     # sql.drop_duplicates("extraction_parametrable")
