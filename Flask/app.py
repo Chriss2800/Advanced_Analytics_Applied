@@ -177,7 +177,7 @@ def prediction():
             })
             predictions = model.predict(prediction_df)
         if len(predictions) != 0:
-            prediction_dates = np.append(prediction_dates, "Summe")
+            prediction_dates = np.append(prediction_dates, "SUM")
             predictions = np.append(predictions, sum(predictions))
             predicted_df = pd.DataFrame({
                 'Date': prediction_dates,
